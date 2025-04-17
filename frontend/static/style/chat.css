@@ -1,0 +1,77 @@
+header {
+    background-color: #002aff;
+    display: flex;
+    align-items: center;
+    align-content: center;
+}
+
+body {
+    margin: 0;
+    display: grid;
+}
+
+header img {
+    padding: 10px;
+    height: 100px;
+    width: 100px;
+}
+
+#loupe:hover {
+    scale: 1.2;
+    cursor: pointer;
+}
+
+
+.search-icon {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logo {
+    font-size: 26px;
+    margin-left: 10px;
+}
+
+.chat-container {
+    background-color: white;
+}
+
+.chat-item {
+    display: flex;
+    border-bottom: 1px solid black;
+    padding: 10px;
+    align-items: center;
+}
+
+.avatar {
+    width: 100px;
+    font-style: italic;
+    font-size: 14px;
+    color: gray;
+}
+
+.chat-content {
+    flex-grow: 1;
+}
+
+.chat-content .pseudo {
+    font-weight: bold;
+}
+
+.chat-content .last-message {
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.chat-info {
+    width: 140px;
+    font-size: 12px;
+    color: red;
+    font-style: italic;
+    text-align: right;
+}
