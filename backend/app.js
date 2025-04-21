@@ -1,12 +1,27 @@
-const express = require("express");
+require('dotenv').config();
+
+const express = require('express');
+const session = require('express-session');
 const path = require('path');
 
 const app = express();
 const authRoutes = require('./routes/auth');
+const classicRoutes = require('./routes/classic');
+const sessionSecret = process.env.SESSION_SECRET;
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(__dirname, '..', 'frontend', 'template'));
+app.use('/static', express.static(path.join(__dirname, '..', 'frontend', 'static')));
+app.use(session({
+    name: 'session_id',
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+    }
+}));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,6 +30,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/', authRoutes);
+app.use('/', authRoutes, classicRoutes);
 
 module.exports = app;

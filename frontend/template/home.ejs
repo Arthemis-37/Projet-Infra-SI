@@ -13,6 +13,9 @@
         <img id="loupe" src="../static/img/loupe.png" alt="loupe">
         <h1>Caurchat</h1>
         <img src="../static/img/logoCaurchat.png" alt="">
+        <% if (username) { %>
+            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= username %></p>
+        <% } %>
     </header>
 
 </body>

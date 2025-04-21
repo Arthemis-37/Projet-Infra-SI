@@ -1,19 +1,65 @@
 const router = require('express').Router();
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-router.get('/signup', (req, res) => {
-    res.render('signup', { message: null })
+router.get('/create_account', (req, res) => {
+    if (req.session.user) {
+        return res.redirect('/home');
+    }
+    res.render('create_account', { message: null })
 });
 
-router.post('/signup', async (req, res) => {
-    const { username, email, password } = req.body;
+router.post('/create_account', async (req, res) => {
+    const { username, email, password, checkpassword } = req.body;
+
+    if (password !== checkpassword) {
+        return res.render('create_account', { message: "Les mots de passe ne correspondent pas !", username, email });
+    }
 
     try {
         const user = new User({ username, email, password });
         await user.save();
-        res.render('success', { username })
+        req.session.user = {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        }
+        res.redirect('/home');
     } catch (err) {
-        res.render('signup', { message: err.message });
+        res.render('create_account', { message: err.message });
+    }
+});
+
+router.get('/login', (req, res) => {
+    if (req.session.user) {
+        return res.redirect('/home');
+    }
+    res.render('login', { message: null });
+});
+
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.render('login', { message: "Email inexistante" });
+        }
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.render('login', { message: "Mot de passe incorrect" });
+        }
+
+        req.session.user = {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        };
+
+        res.redirect('/home');
+    } catch (err) {
+        res.render('login', { message: err.message });
     }
 });
 

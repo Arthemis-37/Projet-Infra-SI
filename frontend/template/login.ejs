@@ -10,12 +10,15 @@
     <div class="container">
         <img src="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" alt="Logo Caurchat" class="logo" />
         <h1 class="title">Caurchat</h1>
-        <form class="form">
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Mot de passe" required />
+        <% if (message) { %>
+            <p style="font-weight: bold;color: red;font-size: 22px"><%= message %></p>
+        <% } %>
+        <form class="form" action="/login" method="POST">
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Mot de passe" required />
             <button type="submit">Se connecter</button>
         </form>
-        <a href="../template/create_account.html" class="register-link">Pas de compte ?</a>
+        <a href="/create_account" class="register-link">Pas de compte ?</a>
         <a href="../template/reset_passeword.html" class="mdp-link">Mot de passe oublié ?</a>
     </div>
 </body>
