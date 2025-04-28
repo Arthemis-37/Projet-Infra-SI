@@ -7,6 +7,7 @@ const path = require('path');
 const app = express();
 const authRoutes = require('./routes/auth');
 const classicRoutes = require('./routes/classic');
+const chatRoutes = require('./routes/chat');
 const sessionSecret = process.env.SESSION_SECRET;
 
 app.set('view engine', 'ejs');
@@ -30,6 +31,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/', authRoutes, classicRoutes);
+app.use('/', authRoutes, classicRoutes, chatRoutes);
 
 module.exports = app;

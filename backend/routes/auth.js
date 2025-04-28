@@ -32,7 +32,7 @@ router.post('/create_account', async (req, res) => {
 
 router.get('/login', (req, res) => {
     if (req.session.user) {
-        return res.redirect('/home');
+        return res.redirect('/');
     }
     res.render('login', { message: null });
 });
@@ -57,7 +57,7 @@ router.post('/login', async (req, res) => {
             email: user.email
         };
 
-        res.redirect('/home');
+        res.redirect('/');
     } catch (err) {
         res.render('login', { message: err.message });
     }

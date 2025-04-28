@@ -1,11 +1,14 @@
 const router = require('express').Router();
+const User = require('../models/User');
+const authMiddleware = require('../middlewares/auth');
 
-router.get('/home', (req, res) => {
-    if (!req.session.user) {
-        return res.render('home', { username: null });
+router.get('/', authMiddleware, async (req, res) => {
+    try {
+        const allUsers = await User.find();
+        res.render('home', { username: req.session.user.username, allUsers: allUsers });
+    } catch (e) {
+        console.error(e);
     }
-
-    res.render('home', { username: req.session.user.username });
 });
 
 module.exports = router;

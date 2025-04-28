@@ -49,6 +49,17 @@
             <strong>notifications</strong>
         </div>
     </div>
+    <form action="/create-discussion" method="POST">
+        <label for="selectUser">Sélection du destinataire</label>
+        <select id="selectUser" name="selectUser">
+            <% if (allUsers) { %>
+                <% allUsers.forEach(user => { %>
+                    <option value="<%= user.userId %>"><%= user.username %></option>
+                <% }) %>
+            <% } %>
+        </select>
+        <button type="submit">Créer une discussion</button>
+    </form>
 </div>
 
 </html>
