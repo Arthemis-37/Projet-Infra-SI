@@ -1,14 +1,11 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
-const conversationSchema = new mongoose.Schema({
-    conversationId: { type: String, required: true, unique: true },
-    participants: [{ 
-        userId: { type: String, required: true }, 
-        username: { type: String, required: true },
-        avatar: { type: String }
-    }],
-    lastMessage: { type: String },
+const convSchema = new mongoose.Schema({
+    conversationId: { type: String, required: true, default: uuidv4 },
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
     updatedAt: { type: Date, default: Date.now }
-});
+})
 
-module.exports = mongoose.model('Conversation', conversationSchema);
+module.exports = mongoose.models.Conversation || mongoose.model('Conversation', convSchema);
