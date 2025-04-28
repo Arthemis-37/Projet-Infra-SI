@@ -5,8 +5,7 @@ router.get('/home', (req, res) => {
         return res.render('home', { username: null });
     }
 
-    const { username, email } = req.session.user;
-    res.render('home', { username: username })
+    res.render('home', { username: req.session.user.username });
 });
 
 module.exports = router;

@@ -20,7 +20,7 @@ router.post('/create_account', async (req, res) => {
         const user = new User({ username, email, password });
         await user.save();
         req.session.user = {
-            id: user._id,
+            id: user.userId,
             username: user.username,
             email: user.email
         }
@@ -48,11 +48,11 @@ router.post('/login', async (req, res) => {
 
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.render('login', { message: "Mot de passe incorrect" });
+            return res.render('login', { message: "Mot de passe incorrect", email: email });
         }
 
         req.session.user = {
-            id: user._id,
+            id: user.userId,
             username: user.username,
             email: user.email
         };

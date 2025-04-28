@@ -14,7 +14,7 @@
             <p style="font-weight: bold;color: red;font-size: 22px"><%= message %></p>
         <% } %>
         <form class="form" action="/login" method="POST">
-            <input type="email" name="email" placeholder="Email" required />
+            <input type="email" name="email" placeholder="Email" value="<%= typeof email !== 'undefined' ? email : '' %>" required />
             <input type="password" name="password" placeholder="Mot de passe" required />
             <button type="submit">Se connecter</button>
         </form>
