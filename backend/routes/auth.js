@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
+const Conversation = require('../models/Conversation');
+const Message = require('../models/Message');
 const User = require('../models/User');
 
 router.get('/create_account', (req, res) => {
