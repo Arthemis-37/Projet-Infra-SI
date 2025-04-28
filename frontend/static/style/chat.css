@@ -2,7 +2,25 @@ header {
     background-color: #002aff;
     display: flex;
     align-items: center;
-    align-content: center;
+}
+
+header p{
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    font-size: 22px
+}
+
+header button{
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 20px;
+    padding: 10px;
+}
+
+header button:hover{
+    scale: 1.2;
 }
 
 body {

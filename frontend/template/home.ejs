@@ -10,12 +10,17 @@
 
 <body>
     <header>
-        <img id="loupe" src="../static/img/loupe.png" alt="loupe">
+        <img id="loupe" src="../static/img/loupe.png" alt="Loupe">
         <h1>Caurchat</h1>
-        <img src="../static/img/logoCaurchat.png" alt="">
+        <img src="../static/img/logoCaurchat.png" alt="Logo de Caurchat">
         <% if (username) { %>
-            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= username %></p>
+            <p>Bonjour <%= username %></p>
+            <button onclick="window.location.href='/logout'">Se déconnecter</button>
+        <% } else { %>
+            <button onclick="window.location.href='/login'">Se connecter</button>
         <% } %>
+        
+        
     </header>
 
 </body>
