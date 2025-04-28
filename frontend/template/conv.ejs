@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>conv</title>
+</head>
+<body>
+    <% discussion.participants.forEach(user => { %>
+        <p><%= user.username %></p>
+    <% }) %>
+    <% if (messages) { %>
+        <% messages.forEach(message => { %>
+            <% let color;
+            if (message.sender.username === username) color = 'blue';
+            else color = 'red';%>
+            <p style="color:<%= color %>"><%= message.sender.username %> : <span style="color: black"><%= message.content %></span></p>
+        <% }) %>
+    <% } %>
+    <p id="typingStatus" style="color: #444"></p>
+    <form action="/send-message/<%= discussion.conversationId %>" method="POST">
+        <input type="text" name="content" id="content" oninput="emitTypingEvent()">
+        <button type="submit">Envoyer</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let typingTimeout;
+
+        function emitTypingEvent() {
+            const username = "<%= username %>";
+
+            clearTimeout(typingTimeout);
+
+            socket.emit("typing", username);
+
+            typingTimeout = setTimeout(() => {
+                const typingStatus = document.getElementById("typingStatus");
+                if (typingStatus) {
+                    typingStatus.textContent = "";
+                }
+            }, 3000)
+        }
+
+        socket.on('typing', (username) => {
+            const typingStatus = document.getElementById("typingStatus");
+            typingStatus.textContent = `${username} est en train d'écrire...`
+        });
+    </script>
+</body>
+</html>

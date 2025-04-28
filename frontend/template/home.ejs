@@ -13,8 +13,8 @@
         <img id="loupe" src="../static/img/loupe.png" alt="loupe">
         <h1>Caurchat</h1>
         <img src="../static/img/logoCaurchat.png" alt="">
-        <% if (username) { %>
-            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= username %></p>
+        <% if (user) { %>
+            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= user.username %></p>
         <% } %>
     </header>
 
@@ -34,21 +34,26 @@
             <strong>notifications</strong>
         </div>
     </div>
-
-    <div class="chat-item">
-        <div class="avatar">Img<br>Pseudo</div>
-        <div class="chat-content">
-            <div class="pseudo">Pseudo 2</div>
-            <div class="last-message">Dernier message qui a été envoyé</div>
-        </div>
-        <div class="chat-info">
-            H dernier msg /<br>
-            ou il y a 1,2,3 j etc...<br><br>
-            X =<br>
-            Nb<br>
-            <strong>notifications</strong>
-        </div>
-    </div>
+    <% if (userConvs) { %>
+    <% userConvs.forEach(conv => { %>
+        <a class="chat-item" href="/conversation/<%= conv.conversationId %>">
+            <div class="avatar">Img<br>Pseudo</div>
+            <div class="chat-content">
+                <div class="pseudo">
+                    <%= conv.participants.filter(participant => participant._id.toString() !== user._id.toString())[0].username %>
+                </div>
+                <div class="last-message"><%= conv.lastMessage ? conv.lastMessage.content : "Aucun message" %></div>
+            </div>
+            <div class="chat-info">
+                <%= conv.lastMessage ? conv.lastMessage.createdAt.toLocaleString() : "" %> /<br>
+                ou il y a 1,2,3 j etc...<br><br>
+                X =<br>
+                Nb<br>
+                <strong>notifications</strong>
+            </div>
+        </a>
+    <% }) %>
+    <% } %>
     <form action="/create-discussion" method="POST">
         <label for="selectUser">Sélection du destinataire</label>
         <select id="selectUser" name="selectUser">

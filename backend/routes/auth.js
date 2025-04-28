@@ -20,6 +20,7 @@ router.post('/create_account', async (req, res) => {
         const user = new User({ username, email, password });
         await user.save();
         req.session.user = {
+            _id: user._id,
             id: user.userId,
             username: user.username,
             email: user.email
@@ -52,6 +53,7 @@ router.post('/login', async (req, res) => {
         }
 
         req.session.user = {
+            _id: user._id,
             id: user.userId,
             username: user.username,
             email: user.email
