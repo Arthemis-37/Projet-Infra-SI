@@ -1,54 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caurchat</title>
     <link rel="stylesheet" href="../static/style/chat.css">
-    <title>Home</title>
 </head>
-
 <body>
-    <header>
-        <img id="loupe" src="../static/img/loupe.png" alt="loupe">
-        <h1>Caurchat</h1>
-        <img src="../static/img/logoCaurchat.png" alt="">
-        <% if (username) { %>
-            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= username %></p>
-        <% } %>
-    </header>
 
-</body>
-<div class="chat-container">
-    <div class="chat-item">
-        <div class="avatar">Img<br>Pseudo</div>
-        <div class="chat-content">
-            <div class="pseudo">Pseudo 1</div>
-            <div class="last-message">Dernier message qui a été envoyé</div>
-        </div>
-        <div class="chat-info">
-            H dernier msg /<br>
-            ou il y a 1,2,3 j etc...<br><br>
-            X =<br>
-            Nb<br>
-            <strong>notifications</strong>
-        </div>
+<header>
+    <img id="loupe" src="../static/img/loupe.png" alt="Loupe">
+    <h1>Caurchat</h1>
+    <img src="../static/img/logoCaurchat.png" alt="Logo de Caurchat">
+    <% if (username) { %>
+        <p>Bonjour <%= username %></p>
+        <button onclick="window.location.href='/logout'">Se déconnecter</button>
+    <% } else { %>
+        <button onclick="window.location.href='/login'">Se connecter</button>
+    <% } %>
+</header>
+
+<div class="container">
+    <div class="sidebar">
+        <% conversations.forEach(conversation => { 
+            const otherParticipant = conversation.participants.find(p => p.userId !== currentUser.userId);
+        %>
+            <div class="chat <%= selectedConversation.conversationId === conversation.conversationId ? 'selected' : '' %>">
+                <img src="<%= otherParticipant.avatar || '/static/img/default-avatar.png' %>" alt="avatar">
+                <div>
+                    <div><%= otherParticipant.username %></div>
+                    <div class="chat-info">
+                        D. m. q. a. é. e.
+                    </div>
+                    <div class="notifications">
+                        H dernier msg : <%= conversation.updatedAt.toLocaleString() %><br>
+                        <%= conversation.lastMessage ? conversation.lastMessage.slice(0, 30) + "..." : "" %>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
     </div>
 
-    <div class="chat-item">
-        <div class="avatar">Img<br>Pseudo</div>
-        <div class="chat-content">
-            <div class="pseudo">Pseudo 2</div>
-            <div class="last-message">Dernier message qui a été envoyé</div>
+    <div class="chat-content">
+        <div class="chat-header">
+            <%= selectedOtherParticipant.username %>
         </div>
-        <div class="chat-info">
-            H dernier msg /<br>
-            ou il y a 1,2,3 j etc...<br><br>
-            X =<br>
-            Nb<br>
-            <strong>notifications</strong>
+        <div class="messages">
+            <% messages.forEach(message => { %>
+                <div class="message <%= message.sender.userId === currentUser.userId ? 'sent' : 'received' %>">
+                    <%= message.content %>
+                    <% if (message.sender.userId !== currentUser.userId) { %>
+                        <img src="<%= selectedOtherParticipant.avatar || '/static/img/default-avatar.png' %>" alt="avatar">
+                    <% } %>
+                </div>
+            <% }); %>
         </div>
+        <form class="input-area" action="/send-message" method="POST">
+            <input type="hidden" name="conversationId" value="<%= selectedConversation.conversationId %>">
+            <input type="text" name="content" placeholder="Écrivez un message..." autocomplete="off">
+            <button type="submit">ENVOYER</button>
+        </form>
     </div>
 </div>
 
+</body>
 </html>
