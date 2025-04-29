@@ -3,6 +3,9 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 const app = require("./app");
 const { Server } = require("socket.io");
+const Message = require("./models/Message");
+const User = require("./models/User");
+const Conversation = require("./models/Conversation");
 
 userDB = process.env.DB_USER;
 passwordDB = process.env.DB_PASSWORD;
@@ -16,13 +19,49 @@ const expressServer = app.listen(port, () => {
 const io = new Server(expressServer);
 
 io.on('connection', (socket) => {
-    socket.on('typing', (username) => {
-        console.log(username + " est en train d'écrire");
-        socket.emit('typing', username);
+    socket.on('join-conversation', (conversationId) => {
+        socket.join(conversationId);
     });
 
-    socket.on('new-message', (message) => {
-        io.emit('new-message', message);
+    socket.on('typing', (username, conversationId) => {
+        console.log(username + " est en train d'écrire");
+        socket.broadcast.to(conversationId).emit('typing', username);
+    });
+
+    socket.on('new-message', async (data) => {
+        try {
+            const { content, sender, conversationId } = data;
+
+            socket.broadcast.to(conversationId).emit('stop-typing', sender);
+
+            const user = await User.findOne({ username: sender });
+            if (!user) {
+                console.log(sender + " non trouvé");
+                return;
+            }
+
+            const conversation = await Conversation.findOne({ conversationId: conversationId });
+            if (!conversation) {
+                console.log("Conversation non trouvée");
+                return;
+            }
+
+            const message = await Message.create({
+                conversation: conversation._id,
+                sender: user._id,
+                content: content
+            })
+
+            conversation.lastMessage = message._id;
+            await conversation.save();
+
+            io.to(conversationId).emit('new-message', {
+                sender: user.username,
+                content: content
+            });
+        } catch (error) {
+            console.log(error);
+        }
     });
 })
 

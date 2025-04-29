@@ -8,16 +8,18 @@
     <% discussion.participants.forEach(user => { %>
         <p><%= user.username %></p>
     <% }) %>
-    <% if (messages) { %>
-        <% messages.forEach(message => { %>
-            <% let color;
-            if (message.sender.username === username) color = 'blue';
-            else color = 'red';%>
-            <p style="color:<%= color %>"><%= message.sender.username %> : <span style="color: black"><%= message.content %></span></p>
-        <% }) %>
-    <% } %>
+    <div id="messageContainer">
+        <% if (messages) { %>
+            <% messages.forEach(message => { %>
+                <% let color = (message.sender.username === username) ? 'blue' : 'red'; %>
+                <p style="color:<%= color %>">
+                    <%= message.sender.username %> : <span style="color: black"><%= message.content %></span>
+                </p>
+            <% }) %>
+        <% } %>
+    </div>
     <p id="typingStatus" style="color: #444"></p>
-    <form action="/send-message/<%= discussion.conversationId %>" method="POST">
+    <form id="messageForm">
         <input type="text" name="content" id="content" oninput="emitTypingEvent()">
         <button type="submit">Envoyer</button>
     </form>
@@ -26,25 +28,71 @@
         const socket = io();
         let typingTimeout;
 
+        socket.emit('join-conversation', "<%= discussion.conversationId %>");
+
         function emitTypingEvent() {
             const username = "<%= username %>";
+            socket.emit("typing", username, "<%= discussion.conversationId %>");
+        }
 
+        socket.on('typing', (username) => {
             clearTimeout(typingTimeout);
-
-            socket.emit("typing", username);
+            const typingStatus = document.getElementById("typingStatus");
+            typingStatus.textContent = `${username} est en train d'écrire...`
 
             typingTimeout = setTimeout(() => {
                 const typingStatus = document.getElementById("typingStatus");
                 if (typingStatus) {
                     typingStatus.textContent = "";
                 }
-            }, 3000)
-        }
-
-        socket.on('typing', (username) => {
-            const typingStatus = document.getElementById("typingStatus");
-            typingStatus.textContent = `${username} est en train d'écrire...`
+            }, 3000);
         });
+
+        const form = document.getElementById('messageForm');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            /** @type {HTMLInputElement} **/
+            const contentInput = document.getElementById('content');
+            const content = contentInput.value.trim();
+            const sender = "<%= username %>";
+            const conversationId = "<%= discussion.conversationId %>";
+
+            if (content === "") return;
+
+            socket.emit('new-message', {
+                content: content,
+                sender: sender,
+                conversationId: conversationId
+            })
+
+            addMessageToDOM(sender, content, true);
+            contentInput.value = "";
+        })
+
+        socket.on('stop-typing', (username) => {
+            const typingStatus = document.getElementById("typingStatus");
+            if (typingStatus.textContent.includes(username)) typingStatus.textContent = "";
+        })
+
+        socket.on('new-message', (messagedata) => {
+            const sender = messagedata.sender;
+            const content = messagedata.content;
+
+            if (sender !== "<%= username %>") {
+                addMessageToDOM(sender, content, false);
+            }
+        })
+
+        function addMessageToDOM(sender, content, isOwnMessage) {
+            const messagesContainer = document.getElementById('messageContainer');
+            const newMessage = document.createElement('p');
+            newMessage.style.color = isOwnMessage ? 'blue' : 'red';
+            newMessage.innerHTML = `${sender} : <span style="color:black">${content}</span>`;
+            messagesContainer.appendChild(newMessage);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
     </script>
 </body>
 </html>
