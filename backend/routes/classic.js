@@ -6,9 +6,10 @@ const authMiddleware = require('../middlewares/auth');
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const allUsers = await User.find();
-        const userConvs = await Conversation.find({ participants: { $in: req.session.user._id }})
+        const userConvs = await Conversation.find({ participants: req.session.user._id })
             .populate('participants', 'username')
-            .populate('lastMessage', 'content createdAt');
+            .populate('lastMessage', 'content createdAt')
+            .sort({ updatedAt: -1 });
 
         res.render('home', {
             user: { username: req.session.user.username, _id: req.session.user._id },
