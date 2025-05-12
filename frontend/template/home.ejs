@@ -1,75 +1,73 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/style/chat.css">
     <title>Home</title>
 </head>
-
 <body>
     <header>
         <img id="loupe" src="../static/img/loupe.png" alt="loupe">
         <h1>Caurchat</h1>
-        <img src="../static/img/logoCaurchat.png" alt="">
+        <img src="../static/img/logoCaurchat.png" alt="logo">
         <% if (user) { %>
-            <p style="font-weight: bold;text-align: center;color: white;font-size: 22px">Bonjour <%= user.username %></p>
+            <p style="font-weight: bold; text-align: center; color: white; font-size: 22px;">
+                Bonjour <%= user.username %>
+            </p>
         <% } %>
     </header>
 
-</body>
-<div class="chat-container">
-    <div class="conv-menu">
-        <div class="chat-item">
-            <div class="avatar">Img<br>Pseudo</div>
-            <div class="chat-content">
-                <div class="pseudo">Pseudo 1</div>
-                <div class="last-message">Dernier message qui a été envoyé</div>
+    <div class="chat-container">
+        <div class="conv-menu">
+            <% if (userConvs) { %>
+                <% userConvs.forEach(conv => { 
+                    const otherParticipant = conv.participants.find(p => p._id.toString() !== user._id.toString());
+                %>
+                    <div class="chat-item" data-id="<%= conv.conversationId %>">
+                        <div class="avatar">
+                            Img<br><%= otherParticipant.username %>
+                        </div>
+                        <div class="chat-content">
+                            <div class="pseudo"><%= otherParticipant.username %></div>
+                            <div class="last-message">
+                                <%= conv.lastMessage ? conv.lastMessage.content : "Aucun message" %>
+                            </div>
+                        </div>
+                        <div class="chat-info">
+                            <%= conv.lastMessage && conv.lastMessage.createdAt 
+                                ? new Date(conv.lastMessage.createdAt).toLocaleString() 
+                                : "" %>
+                            <strong>notifications</strong>
+                        </div>
+                    </a>
+                <% }) %>
+            <% } %>
         </div>
-        <div class="chat-info">
-            H dernier msg /<br>
-            ou il y a 1,2,3 j etc...<br><br>
-            X =<br>
-            Nb<br>
-            <strong>notifications</strong>
-        </div>
-    </div>
-    <% if (userConvs) { %>
-    <% userConvs.forEach(conv => { %>
-        <a class="chat-item" href="/conversation/<%= conv.conversationId %>">
-            <div class="avatar">Img<br>Pseudo</div>
-            <div class="chat-content">
-                <div class="pseudo">
-                    <%= conv.participants.filter(participant => participant._id.toString() !== user._id.toString())[0].username %>
-                </div>
-                <div class="last-message"><%= conv.lastMessage ? conv.lastMessage.content : "Aucun message" %></div>
-            </div>
-            <div class="chat-info">
-                <%= conv.lastMessage ? conv.lastMessage.createdAt.toLocaleString() : "" %> /<br>
-                ou il y a 1,2,3 j etc...<br><br>
-                X =<br>
-                Nb<br>
-                <strong>notifications</strong>
-            </div>
-        </a>
-    <% }) %>
-    <% } %>
-    </div>
-    <div class="discussion">
-        <div class="contact"></div>
-    </div>
-</div>
-<form action="/create-discussion" method="POST">
-    <label for="selectUser">Sélection du destinataire</label>
-    <select id="selectUser" name="selectUser">
-        <% if (allUsers) { %>
-            <% allUsers.forEach(user => { %>
-                <option value="<%= user.userId %>"><%= user.username %></option>
-            <% }) %>
-        <% } %>
-    </select>
-    <button type="submit">Créer une discussion</button>
-</form>
 
+<div class="discussion">
+    <div class="contact"></div>
+
+<% if (typeof discussion === 'undefined' || !discussion) { %>
+    <h1>Sélectionner une discussion pour parler à quelqu'un</h1>
+<% } else { %>
+    <%- include('conv', { discussion, messages, username }) %>
+<% } %>
+
+</div>
+
+    </div>
+
+    <form action="/create-discussion" method="POST">
+        <label for="selectUser">Sélection du destinataire</label>
+        <select id="selectUser" name="selectUser">
+            <% if (allUsers) { %>
+                <% allUsers.forEach(u => { %>
+                    <option value="<%= u.userId %>"><%= u.username %></option>
+                <% }) %>
+            <% } %>
+        </select>
+        <button type="submit">Créer une discussion</button>
+    </form>
+</body>
 </html>
