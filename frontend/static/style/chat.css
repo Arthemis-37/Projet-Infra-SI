@@ -39,6 +39,9 @@ header img {
 
 .chat-container {
     background-color: white;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
 }
 
 .chat-item {
@@ -74,4 +77,10 @@ header img {
     color: red;
     font-style: italic;
     text-align: right;
+}
+
+.discussion {
+    width: 300%;
+    height: 100%;
+    border-left: 1px solid black;
 }

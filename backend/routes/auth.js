@@ -25,7 +25,7 @@ router.post('/create_account', async (req, res) => {
             username: user.username,
             email: user.email
         }
-        res.redirect('/home');
+        res.redirect('/');
     } catch (err) {
         res.render('create_account', { message: err.message });
     }
