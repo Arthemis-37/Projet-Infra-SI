@@ -57,7 +57,8 @@ io.on('connection', (socket) => {
 
             io.to(conversationId).emit('new-message', {
                 sender: user.username,
-                content: content
+                content: content,
+                conversationId: conversationId
             });
         } catch (error) {
             console.log(error);

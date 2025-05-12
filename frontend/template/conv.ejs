@@ -5,6 +5,11 @@
     <title>conv</title>
 </head>
 <body>
+    <% if (noConvSet) { %>
+        <div style="text-align: center; align-items: center; justify-items: center">
+            <p style="font-size: 22px">Cliquer sur une conversation pour commencer à discuter !</p>
+        </div>
+    <% } else { %>
     <% discussion.participants.forEach(user => { %>
         <p><%= user.username %></p>
     <% }) %>
@@ -94,5 +99,6 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     </script>
+    <% } %>
 </body>
 </html>

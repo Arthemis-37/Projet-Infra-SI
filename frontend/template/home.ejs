@@ -37,7 +37,7 @@
     </div>
     <% if (userConvs) { %>
     <% userConvs.forEach(conv => { %>
-        <a class="chat-item" href="/conversation/<%= conv.conversationId %>">
+        <a class="chat-item" data-conv-id="<%= conv. conversationId %>" href="/conversation/<%= conv.conversationId %>">
             <div class="avatar">Img<br>Pseudo</div>
             <div class="chat-content">
                 <div class="pseudo">

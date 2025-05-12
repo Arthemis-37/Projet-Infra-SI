@@ -20,6 +20,10 @@ router.post('/create-discussion', async (req, res) => {
     }
 })
 
+router.get('/conversation', (req, res) => {
+    res.render('conv', { noConvSet: true, discussion: null, messages: null, username: null })
+})
+
 router.get('/conversation/:conversationId', async (req, res) => {
     try {
         const discussion = await Conversation.findOne({ conversationId: req.params.conversationId })
@@ -27,7 +31,7 @@ router.get('/conversation/:conversationId', async (req, res) => {
         const messages = await Message.find({ conversation: discussion._id })
             .populate('sender', 'username');
 
-        res.render('conv', { discussion: discussion, messages: messages, username: req.session.user.username });
+        res.render('conv', { noConvSet: false, discussion: discussion, messages: messages, username: req.session.user.username });
     } catch (e) {
         console.error(e);
     }
