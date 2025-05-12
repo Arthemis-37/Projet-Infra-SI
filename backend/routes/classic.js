@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Conversation = require('../models/Conversation');
 const authMiddleware = require('../middlewares/auth');
 
+// Route pour la page d'accueil
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const allUsers = await User.find();

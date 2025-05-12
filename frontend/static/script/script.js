@@ -65,3 +65,23 @@ if (conversationId && username) {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Script chargé, en attente de clics sur .chat-item");
+
+    document.querySelectorAll(".chat-item").forEach(item => {
+        item.addEventListener("click", async () => {
+            console.log("Clic sur conversation ID :", convId);
+
+            const convId = item.dataset.convId;
+
+            try {
+                const res = await fetch(`/api/conversation/${convId}`);
+                const html = await res.text();
+                document.querySelector(".discussion").innerHTML = html;
+            } catch (err) {
+                console.error("Erreur lors du chargement de la conversation :", err);
+            }
+        });
+    });
+});
