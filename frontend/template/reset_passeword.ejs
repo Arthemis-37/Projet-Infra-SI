@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/style/style.css" />
     <link rel="icon" type="png" href="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" />
 </head>
 <body>
     <script>
-        let titleText = " Caurchat - Connexion ";
+        let titleText = " Caurchat - Réinitialiser le mot de passe ";
         let position = 0;
         function scrollTitle() {
             document.title = titleText.substring(position) + titleText.substring(0, position);
@@ -18,15 +17,12 @@
         scrollTitle();
     </script>
     <div class="container">
-        <img src="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" alt="Logo Caurchat" class="logo" />
-        <h1 class="title">Caurchat</h1>
-        <form class="form">
+            <img src="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" alt="Logo Caurchat" class="logo" />
+            <div class="title">Caurchat</div>
+        <form class="form" action="/change_password" method="get">
             <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Mot de passe" required />
-            <button type="submit">Se connecter</button>
+            <button type="submit">Réinitialiser le mot de passe</button>
         </form>
-        <a href="/create_account" class="register-link">Pas de compte ?</a>
-        <a href="/reset_passeword" class="mdp-link">Mot de passe oublié ?</a>
     </div>
 </body>
 </html>

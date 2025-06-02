@@ -7,6 +7,16 @@
     <link rel="icon" type="png" href="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" />
 </head>
 <body>
+    <script>
+        let titleText = " Caurchat - Créer un compte ";
+        let position = 0;
+        function scrollTitle() {
+            document.title = titleText.substring(position) + titleText.substring(0, position);
+            position = (position + 1) % titleText.length;
+            setTimeout(scrollTitle, 150);
+        }
+        scrollTitle();
+    </script>
     <div class="container">
         <img src="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" alt="Logo Caurchat" class="logo" />
         <h1 class="title">Caurchat</h1>
@@ -20,7 +30,7 @@
             <input type="password" name="checkpassword" placeholder="Confirmer le mot de passe" required />
             <button type="submit">Créer un compte</button>
         </form>
-        <a href="login.ejs" class="login-link">Vous possédez déjà un compte ?</a>
+        <a href="/login" class="login-link">Vous possédez déjà un compte ?</a>
     </div>
 </body>
 </html>
