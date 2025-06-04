@@ -67,4 +67,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.get('/reset_password', (req, res) => {
+    if (req.session.user) {
+        return res.redirect('/home');
+    }
+    res.render('reset_password', { message: null, color: null })
+})
+
+router.post('/reset_password', async (req, res) => {
+    const email = req.body.email
+
+    try {
+        const user = await User.findOne({ email: email })
+        if (!user) res.render('reset_password', { message: "Email non trouvée dans la base de données", color: "red" })
+    } catch (e) {
+        res.render('reset_password', { message: e.message, color: "red" })
+    }
+})
+
 module.exports = router;
