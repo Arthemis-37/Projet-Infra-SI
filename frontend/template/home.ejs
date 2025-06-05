@@ -45,36 +45,34 @@
                             <%= conv.lastMessage ? new Date(conv.lastMessage.createdAt).toLocaleString() : "" %>
                         </div>
                     </a>
-                <% }) %>
-            <% } %>
-            <section class="new-discussion-form">
-                <form action="/create-discussion" method="POST">
-                    <label for="selectUser">Sélection du destinataire</label>
-                    <select id="selectUser" name="selectUser">
-                        <% if (allUsers) { %>
-                            <% allUsers.forEach(user=> { %>
-                                <option value="<%= user.userId %>">
-                                    <%= user.username %>
-                                </option>
-                            <% }) %>
+                    <% }) %>
                         <% } %>
-                    </select>
-                    <button type="submit">Créer une discussion</button>
-                </form>
-            </section>
+                            <section class="new-discussion-form">
+                                <form action="/create-discussion" method="POST">
+                                    <label for="selectUser">Sélection du destinataire</label>
+                                    <select id="selectUser" name="selectUser">
+                                        <% if (allUsers) { %>
+                                            <% allUsers.forEach(user=> { %>
+                                                <option value="<%= user.userId %>">
+                                                    <%= user.username %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                    <button type="submit">Créer une discussion</button>
+                                </form>
+                            </section>
         </div>
 
         <!-- COLONNE DROITE : DISCUSSION SÉLECTIONNÉE -->
-        <div class="discussion">
-            <div class="contact"></div>
-            <div id="discussion-container">
-                Cliquer sur une conversation pour commencer à discuter !
-            </div>
-        </div>
+        <iframe class="discussion" id="convFrame" src="/conversation"></iframe>
     </main>
 
     <!-- FORMULAIRE DE CRÉATION DE DISCUSSION -->
 
 </body>
+<script src="../static/script/script.js" type="module"></script>
+<script src="../static/script/loadConvIframe.js"></script>
+
 
 </html>

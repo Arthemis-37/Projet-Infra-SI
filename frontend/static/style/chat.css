@@ -44,6 +44,7 @@ main {
     align-items: center;
     justify-content: center;
     text-align: center;
+    border: none;
 }
 
 #loupe {

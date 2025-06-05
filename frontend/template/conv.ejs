@@ -1,6 +1,6 @@
 <% if (noConvSet) { %>
     <div style="text-align: center; align-items: center; justify-items: center">
-        <p style="font-size: 22px">Cliquer sur une conversation pour commencer à discuter !</p>
+        <p style="font-size: 22px">Cliquer sur une conversation pour commencer à discuter!</p>
     </div>
     <% } else { %>
         <% discussion.participants.forEach(user=> { %>
@@ -17,19 +17,21 @@
                                             <%= message.content %>
                                         </span>
                                 </p>
-                        <% }) %>
-                    <% } %>
+                                <% }) %>
+                                    <% } %>
                 </div>
                 <p id="typingStatus" style="color: #444"></p>
                 <form id="messageForm">
                     <input type="text" name="content" id="content" oninput="emitTypingEvent()">
                     <button type="submit">Envoyer</button>
                 </form>
-                <script src="/socket.io/socket.io.js"></script>
+                </p>
                 <script src="../static/script/script.js"></script>
+                <script src="../static/script/conv.js"></script>
                 <script>
                     window.currentUsername = "<%= username %>";
                     window.conversationId = "<%= discussion.conversationId %>";
                 </script>
-    <% } %>
-    <p style="color: gray;">ID debug : <%= discussion.conversationId %></p>
+                <script src="/socket.io/socket.io.js"></script>
+                <script src="/static/script/conv.js" type="module"></script>
+                <% } %>
