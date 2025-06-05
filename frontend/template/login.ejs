@@ -19,10 +19,10 @@
     <div class="container">
         <img src="../static/img/ChatGPT Image 17 avr. 2025, 12_32_30.png" alt="Logo Caurchat" class="logo" />
         <h1 class="title">Caurchat</h1>
+        <% if (message) { %>
+            <p style="font-weight: bold;color: red;font-size: 22px"><%= message %></p>
+        <% } %>
         <form class="form" method="POST">
-            <% if (message) { %>
-              <p style="font-weight: bold;color: red;font-size: 22px"><%= message %></p>
-            <% } %>
             <input type="email" placeholder="Email" name="email"  required />
             <input type="password" placeholder="Mot de passe" name="password" required />
             <button type="submit">Se connecter</button>
