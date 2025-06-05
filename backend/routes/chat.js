@@ -11,19 +11,29 @@ router.post('/create-discussion', async (req, res) => {
         const user1 = await User.findOne({ userId: req.session.user.id });
         const user2 = await User.findOne({ userId: selectUser });
 
-        const conversation = await Conversation.create({
-            participants: [user1._id, user2._id],
-        });
+        // 🔍 Vérifie s’il existe déjà une conversation entre ces deux utilisateurs
+        let conversation = await Conversation.findOne({
+            participants: { $all: [user1._id, user2._id], $size: 2 }
+        }).populate('participants', 'username');
 
-        // Recharger la conversation pour le rendu
-        const discussion = await Conversation.findOne({ conversationId: conversation.conversationId })
-            .populate('participants', 'username');
+        if (!conversation) {
+            // ✅ Sinon, on la crée
+            conversation = await Conversation.create({
+                participants: [user1._id, user2._id],
+            });
 
-        const messages = []; // Pas encore de messages dans la nouvelle discussion
+            // recharge pour peupler les noms
+            conversation = await Conversation.findOne({ conversationId: conversation.conversationId })
+                .populate('participants', 'username');
+        }
+
+        const messages = await Message.find({ conversation: conversation._id })
+            .populate('sender', 'username');
+
         const username = req.session.user.username;
 
         req.app.render('conv', {
-            discussion,
+            discussion: conversation,
             messages,
             username,
             noConvSet: false
@@ -40,16 +50,6 @@ router.post('/create-discussion', async (req, res) => {
     }
 });
 
-
-// Page de fallback si aucune conversation n’est sélectionnée
-router.get('/conversation', (req, res) => {
-    res.render('conv', {
-        noConvSet: true,
-        discussion: null,
-        messages: null,
-        username: null
-    });
-});
 
 // ➕ Route API qui renvoie le HTML d'une conversation pour l’injecter dans home.ejs
 router.get('/api/conversation/:conversationId', async (req, res) => {
@@ -113,5 +113,11 @@ router.post('/send-message/:conversationId', async (req, res) => {
         res.status(500).send("Erreur lors de l'envoi du message.");
     }
 });
+
+// Route qui affiche la page par défaut quand aucune conversation n'est sélectionnée
+router.get('/conversation', (req, res) => {
+    res.render('noConv');
+});
+
 
 module.exports = router;
