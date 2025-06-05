@@ -3,11 +3,10 @@ const Conversation = require('../models/Conversation');
 const User = require('../models/User');
 const Message = require('../models/Message');
 
-// Créer une nouvelle discussion
+// ✅ Créer une nouvelle discussion
 router.post('/create-discussion', async (req, res) => {
     try {
         const { selectUser } = req.body;
-
         const user1 = await User.findOne({ userId: req.session.user.id });
         const user2 = await User.findOne({ userId: selectUser });
 
@@ -15,6 +14,7 @@ router.post('/create-discussion', async (req, res) => {
             participants: [user1._id, user2._id],
         });
 
+        // 🔁 Redirection vers l'iframe conversation nouvellement créée
         res.redirect(`/conversation/${conversation.conversationId}`);
     } catch (e) {
         console.error(e);
@@ -22,7 +22,7 @@ router.post('/create-discussion', async (req, res) => {
     }
 });
 
-// Page de fallback si aucune conversation n’est sélectionnée
+// ✅ Affichage vide si aucune conversation sélectionnée (chargé dans iframe)
 router.get('/conversation', (req, res) => {
     res.render('conv', {
         noConvSet: true,
@@ -32,7 +32,34 @@ router.get('/conversation', (req, res) => {
     });
 });
 
-// ➕ Route API qui renvoie le HTML d'une conversation pour l’injecter dans home.ejs
+// ✅ Affichage d'une conversation (chargé dans iframe ou navigation directe)
+router.get('/conversation/:conversationId', async (req, res) => {
+    try {
+        const discussion = await Conversation.findOne({ conversationId: req.params.conversationId })
+            .populate('participants', 'username');
+
+        if (!discussion) {
+            return res.status(404).send("Conversation non trouvée");
+        }
+
+        const messages = await Message.find({ conversation: discussion._id })
+            .populate('sender', 'username');
+
+        const username = req.session.user.username;
+
+        res.render('conv', {
+            discussion,
+            messages,
+            username,
+            noConvSet: false
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Erreur lors de l'affichage de la conversation");
+    }
+});
+
+// ✅ Route API pour charger dynamiquement une conversation en AJAX
 router.get('/api/conversation/:conversationId', async (req, res) => {
     try {
         const discussion = await Conversation.findOne({ conversationId: req.params.conversationId })
@@ -57,7 +84,7 @@ router.get('/api/conversation/:conversationId', async (req, res) => {
                 console.error("Erreur de rendu conv.ejs :", err);
                 return res.status(500).send("Erreur lors du rendu de la discussion.");
             }
-            res.send(html); // renvoie le HTML à injecter
+            res.send(html);
         });
     } catch (error) {
         console.error(error);
@@ -65,14 +92,13 @@ router.get('/api/conversation/:conversationId', async (req, res) => {
     }
 });
 
-// Envoi d’un message via POST classique (non utilisé en fetch ici, mais utile pour fallback ou test)
+// ✅ Envoi d’un message (POST classique - rarement utilisé avec socket.io)
 router.post('/send-message/:conversationId', async (req, res) => {
     try {
         const { content } = req.body;
         const conversationId = req.params.conversationId;
 
         const conversation = await Conversation.findOne({ conversationId });
-
         if (!conversation) {
             return res.status(404).send('Conversation non trouvée');
         }
