@@ -26,12 +26,11 @@
                     <button type="submit">Envoyer</button>
                 </form>
                 </p>
-                <script src="../static/script/script.js"></script>
-                <script src="../static/script/conv.js"></script>
                 <script>
                     window.currentUsername = "<%= username %>";
                     window.conversationId = "<%= discussion.conversationId %>";
                 </script>
-                <script src="/socket.io/socket.io.js"></script>
+                <script src="../static/script/script.js" type="module"></script>
+                <script src="/socket.io/socket.io.js" type="module"></script>
                 <script src="/static/script/conv.js" type="module"></script>
                 <% } %>

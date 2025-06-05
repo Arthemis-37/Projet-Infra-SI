@@ -121,4 +121,48 @@ router.post('/send-message/:conversationId', async (req, res) => {
     }
 });
 
+// Création via API (fetch) pour affichage dynamique
+router.post('/api/create-discussion', async (req, res) => {
+    try {
+        const currentUserId = req.session.userId;
+        const otherUserId = req.body.selectUser;
+
+        if (!otherUserId) {
+            return res.status(400).send("Aucun utilisateur sélectionné.");
+        }
+
+        // Vérifie si une discussion existe déjà entre ces deux utilisateurs
+        let discussion = await Discussion.findOne({
+            participants: { $all: [currentUserId, otherUserId] }
+        });
+
+        if (!discussion) {
+            // Crée une nouvelle discussion
+            discussion = await Discussion.create({
+                participants: [currentUserId, otherUserId]
+            });
+        }
+
+        // Charge les messages (ou non) et renvoie le rendu ejs pour l’iframe
+        const messages = await Message.find({ conversationId: discussion._id }).populate('sender');
+        const participants = await User.find({ _id: { $in: discussion.participants } });
+
+        res.render('conv', {
+            username: req.session.username,
+            discussion: {
+                conversationId: discussion._id,
+                participants,
+            },
+            messages,
+            noConvSet: false,
+        });
+    } catch (error) {
+        console.error("Erreur dans /api/create-discussion :", error);
+        res.status(500).send("Erreur interne du serveur");
+    }
+});
+
+
+
+
 module.exports = router;
