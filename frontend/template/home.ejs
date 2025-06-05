@@ -47,8 +47,9 @@
                     </a>
                     <% }) %>
                         <% } %>
+                            <!-- Formulaire de création discussion -->
                             <section class="new-discussion-form">
-                                <form id="newDiscussionForm">
+                                <form id="newDiscussionForm"> <!-- ajout de l'id pour que le script le trouve -->
                                     <label for="selectUser">Sélection du destinataire</label>
                                     <select id="selectUser" name="selectUser">
                                         <% if (allUsers) { %>
@@ -62,6 +63,7 @@
                                     <button type="submit">Créer une discussion</button>
                                 </form>
                             </section>
+
         </div>
 
         <!-- COLONNE DROITE : DISCUSSION SÉLECTIONNÉE -->

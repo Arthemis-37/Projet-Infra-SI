@@ -69,4 +69,3 @@ io.on('connection', (socket) => {
 mongoose.connect(`mongodb+srv://${userDB}:${passwordDB}@${clusterDB}/?retryWrites=true&w=majority&appName=Cluster0`)
     .then(() => console.log("Connexion à la base de données réussie !"))
     .catch(() => console.log("Connexion à la base de données échouée"));
-

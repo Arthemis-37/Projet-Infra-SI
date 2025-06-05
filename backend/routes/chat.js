@@ -3,10 +3,11 @@ const Conversation = require('../models/Conversation');
 const User = require('../models/User');
 const Message = require('../models/Message');
 
-// ✅ Créer une nouvelle discussion
+// Changer la route POST de création discussion pour renvoyer le HTML de la conv nouvellement créée
 router.post('/create-discussion', async (req, res) => {
     try {
         const { selectUser } = req.body;
+
         const user1 = await User.findOne({ userId: req.session.user.id });
         const user2 = await User.findOne({ userId: selectUser });
 
@@ -14,15 +15,33 @@ router.post('/create-discussion', async (req, res) => {
             participants: [user1._id, user2._id],
         });
 
-        // 🔁 Redirection vers l'iframe conversation nouvellement créée
-        res.redirect(`/conversation/${conversation.conversationId}`);
+        // Recharger la conversation pour le rendu
+        const discussion = await Conversation.findOne({ conversationId: conversation.conversationId })
+            .populate('participants', 'username');
+
+        const messages = []; // Pas encore de messages dans la nouvelle discussion
+        const username = req.session.user.username;
+
+        req.app.render('conv', {
+            discussion,
+            messages,
+            username,
+            noConvSet: false
+        }, (err, html) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Erreur lors du rendu de la discussion.");
+            }
+            res.send(html);
+        });
     } catch (e) {
         console.error(e);
         res.status(500).send("Erreur lors de la création de la discussion.");
     }
 });
 
-// ✅ Affichage vide si aucune conversation sélectionnée (chargé dans iframe)
+
+// Page de fallback si aucune conversation n’est sélectionnée
 router.get('/conversation', (req, res) => {
     res.render('conv', {
         noConvSet: true,
@@ -32,34 +51,7 @@ router.get('/conversation', (req, res) => {
     });
 });
 
-// ✅ Affichage d'une conversation (chargé dans iframe ou navigation directe)
-router.get('/conversation/:conversationId', async (req, res) => {
-    try {
-        const discussion = await Conversation.findOne({ conversationId: req.params.conversationId })
-            .populate('participants', 'username');
-
-        if (!discussion) {
-            return res.status(404).send("Conversation non trouvée");
-        }
-
-        const messages = await Message.find({ conversation: discussion._id })
-            .populate('sender', 'username');
-
-        const username = req.session.user.username;
-
-        res.render('conv', {
-            discussion,
-            messages,
-            username,
-            noConvSet: false
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Erreur lors de l'affichage de la conversation");
-    }
-});
-
-// ✅ Route API pour charger dynamiquement une conversation en AJAX
+// ➕ Route API qui renvoie le HTML d'une conversation pour l’injecter dans home.ejs
 router.get('/api/conversation/:conversationId', async (req, res) => {
     try {
         const discussion = await Conversation.findOne({ conversationId: req.params.conversationId })
@@ -84,7 +76,7 @@ router.get('/api/conversation/:conversationId', async (req, res) => {
                 console.error("Erreur de rendu conv.ejs :", err);
                 return res.status(500).send("Erreur lors du rendu de la discussion.");
             }
-            res.send(html);
+            res.send(html); // renvoie le HTML à injecter
         });
     } catch (error) {
         console.error(error);
@@ -92,13 +84,14 @@ router.get('/api/conversation/:conversationId', async (req, res) => {
     }
 });
 
-// ✅ Envoi d’un message (POST classique - rarement utilisé avec socket.io)
+// Envoi d’un message via POST classique (non utilisé en fetch ici, mais utile pour fallback ou test)
 router.post('/send-message/:conversationId', async (req, res) => {
     try {
         const { content } = req.body;
         const conversationId = req.params.conversationId;
 
         const conversation = await Conversation.findOne({ conversationId });
+
         if (!conversation) {
             return res.status(404).send('Conversation non trouvée');
         }
@@ -120,49 +113,5 @@ router.post('/send-message/:conversationId', async (req, res) => {
         res.status(500).send("Erreur lors de l'envoi du message.");
     }
 });
-
-// Création via API (fetch) pour affichage dynamique
-router.post('/api/create-discussion', async (req, res) => {
-    try {
-        const currentUserId = req.session.userId;
-        const otherUserId = req.body.selectUser;
-
-        if (!otherUserId) {
-            return res.status(400).send("Aucun utilisateur sélectionné.");
-        }
-
-        // Vérifie si une discussion existe déjà entre ces deux utilisateurs
-        let discussion = await Discussion.findOne({
-            participants: { $all: [currentUserId, otherUserId] }
-        });
-
-        if (!discussion) {
-            // Crée une nouvelle discussion
-            discussion = await Discussion.create({
-                participants: [currentUserId, otherUserId]
-            });
-        }
-
-        // Charge les messages (ou non) et renvoie le rendu ejs pour l’iframe
-        const messages = await Message.find({ conversationId: discussion._id }).populate('sender');
-        const participants = await User.find({ _id: { $in: discussion.participants } });
-
-        res.render('conv', {
-            username: req.session.username,
-            discussion: {
-                conversationId: discussion._id,
-                participants,
-            },
-            messages,
-            noConvSet: false,
-        });
-    } catch (error) {
-        console.error("Erreur dans /api/create-discussion :", error);
-        res.status(500).send("Erreur interne du serveur");
-    }
-});
-
-
-
 
 module.exports = router;

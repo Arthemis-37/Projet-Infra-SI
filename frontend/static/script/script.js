@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Gestion de la création de discussion sans rechargement de page
-    const newDiscussionForm = document.querySelector('.new-discussion-form form');
+    const newDiscussionForm = document.getElementById('newDiscussionForm'); // correction ici : id précis
     if (newDiscussionForm) {
         newDiscussionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const userId = select.value;
 
             try {
-                const res = await fetch('/api/create-discussion', {
+                // Note : la route est "/create-discussion" et non "/api/create-discussion"
+                const res = await fetch('/create-discussion', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const html = await res.text();
                 const iframe = document.getElementById('convFrame');
                 if (iframe) {
-                    // Injecte la nouvelle discussion dans l’iframe
+                    // Injecte le HTML renvoyé dans l'iframe
                     const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                     iframeDoc.open();
                     iframeDoc.write(html);

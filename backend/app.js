@@ -11,8 +11,11 @@ const chatRoutes = require('./routes/chat');
 const sessionSecret = process.env.SESSION_SECRET;
 
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '..', 'frontend', 'template'));
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, '..', 'frontend', 'static')));
 app.use(session({
     name: 'session_id',
@@ -23,14 +26,12 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24,
     }
 }));
-
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-RequestedWith, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
-
 app.use('/', authRoutes, classicRoutes, chatRoutes);
 
 module.exports = app;
