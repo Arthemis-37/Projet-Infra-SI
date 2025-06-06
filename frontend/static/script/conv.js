@@ -63,9 +63,8 @@ function addMessageToDOM(sender, content, isOwnMessage) {
     const container = document.getElementById("messageContainer");
     if (!container) return;
 
-    const p = document.createElement("p");
-    p.style.color = isOwnMessage ? "blue" : "red";
-    p.innerHTML = `${sender} : <span style="color:black">${content}</span>`;
-    container.appendChild(p);
+    const span = document.createElement("span");
+    span.className = isOwnMessage ? "sender" : "receiver";
+    container.appendChild(span);
     container.scrollTop = container.scrollHeight;
 }
