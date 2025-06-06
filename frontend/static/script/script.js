@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Gestion de la création de discussion sans rechargement de page
-    const newDiscussionForm = document.getElementById('newDiscussionForm'); // correction ici : id précis
+    const newDiscussionForm = document.getElementById('newDiscussionForm');
     if (newDiscussionForm) {
         newDiscussionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const userId = select.value;
 
             try {
-                // Note : la route est "/create-discussion" et non "/api/create-discussion"
                 const res = await fetch('/create-discussion', {
                     method: 'POST',
                     headers: {
