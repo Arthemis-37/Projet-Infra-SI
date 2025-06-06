@@ -277,7 +277,8 @@ main {
 #typingStatus {
     margin: 10px 20px;
     font-size: 0.9rem;
-    color: #444;
+    color: darkgray;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 #messageForm {
