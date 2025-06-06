@@ -61,7 +61,8 @@ main {
     margin-top: 100px;
     width: 30vw;
     height: calc(100vh - 100px);
-    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
     border-right: 1px solid #ddd;
     background-color: #f9fbff;
 }
