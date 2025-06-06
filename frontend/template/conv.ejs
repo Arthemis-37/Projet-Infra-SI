@@ -1,24 +1,25 @@
+<head>
+    <link rel="stylesheet" href="/static/style/chat.css">
+</head>
 <% if (noConvSet) { %>
     <div style="text-align: center; align-items: center; justify-items: center">
-        <p style="font-size: 22px">Cliquer sur une conversation pour commencer à discuter!</p>
+        <p id="noConvText" style="font-size: 22px">Cliquer sur une conversation pour commencer à discuter!</p>
     </div>
     <% } else { %>
         <% discussion.participants.forEach(user=> { %>
-            <p>
+            <p class="participant-name">
                 <%= user.username %>
             </p>
             <% }) %>
                 <div id="messageContainer">
                     <% if (messages) { %>
                         <% messages.forEach(message=> { %>
-                            <% let color=(message.sender.username===username) ? 'blue' : 'red' ; %>
-                                <p style="color:<%= color %>">
-                                    <%= message.sender.username %> : <span style="color: black">
-                                            <%= message.content %>
-                                        </span>
-                                </p>
+                            <% let color = (message.sender.username===username) ? 'sender' : 'receiver' %>
+                                <span class="<%= color %>">
+                                    <%= message.content %>
+                                </span>
                                 <% }) %>
-                                    <% } %>
+                            <% } %>
                 </div>
                 <p id="typingStatus" style="color: #444"></p>
                 <form id="messageForm">
